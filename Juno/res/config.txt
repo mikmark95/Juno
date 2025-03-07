@@ -1,0 +1,3 @@
+livello=1
+vinte=0
+perse=1
