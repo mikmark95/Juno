@@ -7,24 +7,18 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.Timer;
-
 import controller.GridaUnoAvversarioListener;
 import model.CampoDiGioco;
 
 /**
- * Classe che rappresenta il la finestra di dichiarazione UNO avversario
+ * Classe che rappresenta la finestra di dichiarazione UNO avversario
  * @author michele marchetti
- *
  */
+public class PannelloUnoAvversario extends JDialog {
 
-public class PannelloUnoAvversario extends JDialog{
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3893693776347908523L;
 	/**
-	 * Varibile che contiene il riferimento ad un timer
+	 * Variabile che contiene il riferimento a un timer
 	 */
 	private Timer timer;
 
@@ -33,13 +27,16 @@ public class PannelloUnoAvversario extends JDialog{
 	 * @param String nomeGiocatore
 	 */
 	public PannelloUnoAvversario(String nomeGiocatore) {
-		this.setTitle(nomeGiocatore+" grida");
+		this.setTitle(nomeGiocatore + " grida");
 		this.setLayout(new FlowLayout(FlowLayout.CENTER));
-		
+
 		JButton button = new JButton();
-		button.setIcon(new ImageIcon("res/GRIDA_UNO.png"));
+
+		// Caricamento immagine dal JAR
+		button.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/GRIDA_UNO.png")));
+
 		button.addMouseListener(new GridaUnoAvversarioListener());
-		
+
 		this.add(button);
 		this.pack();
 		this.setVisible(true);
@@ -47,22 +44,21 @@ public class PannelloUnoAvversario extends JDialog{
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.setResizable(false);
 		this.setAlwaysOnTop(true);
-		
+
 		int delay = 3000; //millis
 		ActionListener task = new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				chiudiFinestra();	
+				chiudiFinestra();
 			}
-
 		};
-		CampoDiGioco.instance().setUno(false); //prova 
-		
+
+		CampoDiGioco.instance().setUno(false); //prova
+
 		this.timer = new Timer(delay, task);
 		this.timer.start();
 	}
-	
+
 	/**
 	 * Metodo che viene chiamato dal timer per chiudere la finestra ed avanzare nel gioco
 	 */
@@ -71,11 +67,5 @@ public class PannelloUnoAvversario extends JDialog{
 		this.timer.stop();
 		CampoDiGioco.instance().aggiorna();
 		CampoDiGioco.instance().getTurnoPartita().prossimoTurno();
-		
-		
 	}
-	
-	
-	
-	
 }

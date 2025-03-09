@@ -28,107 +28,89 @@ import model.ValoreCartaSpeciale;
 /**
  * Classe che raprpesenta il pannello sorteggio mazziere
  * @author michele marchetti
- *
  */
 @SuppressWarnings("deprecation")
-public class PannelloSorteggio extends JPanel implements Observer{
-	
-	
-	
-	/**
-	 * 
-	 */
+public class PannelloSorteggio extends JPanel implements Observer {
+
 	private static final long serialVersionUID = 6251915418224817815L;
 
 	/**
 	 * Variabile che contiene il riferimento al modello
 	 */
 	private CampoDiGioco campoDiGioco;
-	
+
 	/**
-	 * Variaible che contiene l'indice dei giocatori
+	 * Variabile che contiene l'indice dei giocatori
 	 */
 	private int indice;
-	
+
 	/**
 	 * Variabile che contiene il riferimento al mazzo di carte
 	 */
 	private MazzoCarte mazzoCarte;
-	
+
 	/**
 	 * Variabile che contiene la lista degli indici dei giocatori
 	 */
 	private List<Integer> lstIndici;
 
 	/**
-	 * MEtodo costruttore
+	 * Metodo costruttore
 	 */
 	public PannelloSorteggio() {
-		
 		this.campoDiGioco = CampoDiGioco.instance();
 		this.campoDiGioco.addObserver(this);
-		this.lstIndici = new ArrayList<Integer>();
+		this.lstIndici = new ArrayList<>();
 
 		this.setOpaque(false);
-		this.setLayout(new FlowLayout(FlowLayout.CENTER,70,150));
-		
+		this.setLayout(new FlowLayout(FlowLayout.CENTER, 70, 150));
+
 		this.mazzoCarte = new MazzoCarte();
-		
-		if (!(campoDiGioco.getTurnoPartita().isSensoOrario()))
-		{
+
+		if (!(campoDiGioco.getTurnoPartita().isSensoOrario())) {
 			Collections.reverse(campoDiGioco.getListaGiocatoriTotali());
 			campoDiGioco.getTurnoPartita().setSensoOrario(true);
 		}
-		
-		for (indice=0; indice <4 ; indice++)
-		{
+
+		for (indice = 0; indice < 4; indice++) {
 			Carta carta = null;
 			try {
 				carta = mazzoCarte.pesca();
 			} catch (MazzoEsauritoException e) {
 				e.printStackTrace();
 			}
-			Giocatore giocatore =campoDiGioco.getListaGiocatoriTotali().get(indice);
+			Giocatore giocatore = campoDiGioco.getListaGiocatoriTotali().get(indice);
 			JCardSorteggio cardSorteggio = new JCardSorteggio(carta, giocatore);
 			this.add(cardSorteggio);
 			int val = 0;
-			if (!(carta.getValore() instanceof ValoreCartaSpeciale))
-			{
+			if (!(carta.getValore() instanceof ValoreCartaSpeciale)) {
 				val = carta.getValore().getValue();
 			}
 			lstIndici.add(val);
 		}
-		
-		
-		JLabel jLabel = new JLabel(new ImageIcon("res/INIZIA_PARTITA.png"));
+
+		// Caricamento immagine dal JAR
+		JLabel jLabel = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("res/INIZIA_PARTITA.png")));
 		jLabel.addMouseListener(new MouseListener() {
-			
+
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
+			public void mouseReleased(MouseEvent e) {}
+
 			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
+			public void mousePressed(MouseEvent e) {}
+
 			@Override
 			public void mouseExited(MouseEvent e) {
 				JLabel lbl = (JLabel) e.getSource();
 				lbl.setBorder(BorderFactory.createEmptyBorder());
-				
 			}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				JLabel lbl = (JLabel) e.getSource();
 				lbl.setBorder(BorderFactory.createLineBorder(Color.yellow, 5));
-				
 			}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				JLabel lbl = (JLabel) e.getSource();
@@ -138,12 +120,11 @@ public class PannelloSorteggio extends JPanel implements Observer{
 			}
 		});
 		jLabel.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
-		jLabel.setForeground(Color.ORANGE);;
+		jLabel.setForeground(Color.ORANGE);
 		jLabel.setBorder(BorderFactory.createEmptyBorder());
-		this.add(jLabel);	
-		
-		campoDiGioco.getTurnoPartita().setIndice(getValoreMax(lstIndici));
+		this.add(jLabel);
 
+		campoDiGioco.getTurnoPartita().setIndice(getValoreMax(lstIndici));
 	}
 
 	/**
@@ -153,32 +134,29 @@ public class PannelloSorteggio extends JPanel implements Observer{
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
-		
+
 		AffineTransform affineTransform = new AffineTransform();
-		
+
 		g2d.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
 		g2d.drawString("Sorteggio per decidere chi sara' il mazziere iniziale", 210, 40);
-		g2d.drawString("Il giocatore che fara' il mazziere e': "+ campoDiGioco.getListaGiocatoriTotali().get(getValoreMax(lstIndici)).getNickname(), 230, 460);
+		g2d.drawString("Il giocatore che fara' il mazziere e': " + campoDiGioco.getListaGiocatoriTotali().get(getValoreMax(lstIndici)).getNickname(), 230, 460);
 	}
-	
+
 	/**
 	 * Metodo che aggiorna l'istanza
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		this.repaint();
-		
 	}
-	
+
 	/**
-	 * Metodo che ritorna il lavore massimo in una lista di interi
-	 * @param list<Integer> lst
+	 * Metodo che ritorna il valore massimo in una lista di interi
+	 * @param List<Integer> lst
 	 * @return int valore massimo
 	 */
 	public int getValoreMax(List<Integer> lst) {
 		int max = Collections.max(lst);
-		int indice = lst.indexOf(max);
-		return indice;
+		return lst.indexOf(max);
 	}
-	
 }

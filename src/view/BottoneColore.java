@@ -12,32 +12,39 @@ import model.ColoreCartaNormale;
 /**
  * Classe che rappresenta un bottone di scelta del colore
  * @author michele marchetti
- *
  */
-public class BottoneColore extends JButton{
-	
-	/**
-	 * 
-	 */
+public class BottoneColore extends JButton {
+
 	private static final long serialVersionUID = 1L;
 	/**
 	 * Variabile che contiene il valore del colore
 	 */
 	private ColoreCartaNormale coloreBottone;
-	
-	
+
 	/**
 	 * Metodo costruttore
 	 */
 	public BottoneColore(ColoreCartaNormale coloreCarta) {
-//		super("Colore "+ coloreCarta.getName());
 		this.coloreBottone = coloreCarta;
 		this.setPreferredSize(new Dimension(25, 50));
-		this.setIcon(new ImageIcon("res/"+"VUOTA_"+coloreCarta.getName()+"_ZOOM.png"));
+
+		// Caricare l'icona dal JAR
+		this.setIcon(loadIcon("res/VUOTA_" + coloreCarta.getName() + "_ZOOM.png"));
+
 		this.setBorder(BorderFactory.createEtchedBorder());
 		this.addMouseListener(new BottoneColoreListener());
-//		this.setBackground(coloreBottone.getColore());
-		
+	}
+
+	/**
+	 * Metodo per caricare un'icona come risorsa dal JAR
+	 */
+	private ImageIcon loadIcon(String path) {
+		try {
+			return new ImageIcon(getClass().getClassLoader().getResource(path));
+		} catch (Exception e) {
+			System.err.println("Immagine non trovata: " + path);
+			return null;
+		}
 	}
 
 	/**
@@ -47,15 +54,9 @@ public class BottoneColore extends JButton{
 	public ColoreCarta getColoreBottone() {
 		return coloreBottone;
 	}
-	
-	/**
-	 * Metodo che ritorna la rappresentazione dell oggetto sotto forma di stringa
-	 * @return String 
-	 */
+
 	@Override
 	public String toString() {
-		return "Bottone: "+coloreBottone.getName();
+		return "Bottone: " + coloreBottone.getName();
 	}
-	
 }
- 

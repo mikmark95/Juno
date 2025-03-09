@@ -18,55 +18,50 @@ import model.ValoreCartaSpeciale;
 /**
  * Classe che rappresenta la finestra che viene visualizzata appena un round termina
  * @author michele marchetti
- *
  */
-public class PannelloVittoriaRound extends JDialog{
+public class PannelloVittoriaRound extends JDialog {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6735629888140860242L;
 	/**
-	 * Variabile che contiene il riferimento ad un timer
+	 * Variabile che contiene il riferimento a un timer
 	 */
 	private Timer timer;
-	
+
 	/**
 	 * Metodo costruttore
 	 * @param String nomeGiocatore
 	 */
 	public PannelloVittoriaRound(String nomeGiocatore) {
-		this.setTitle("Ruond Terminato");
+		this.setTitle("Round Terminato");
 		this.setLayout(new FlowLayout(FlowLayout.CENTER));
-		JLabel jLabel = new JLabel("Il round e' stato vinto da: "+ nomeGiocatore+" e per questo giochera' per primo al prossimo round");
+
+		JLabel jLabel = new JLabel("Il round è stato vinto da: " + nomeGiocatore + " e per questo giocherà per primo al prossimo round");
 		jLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
-		
+
 		this.add(jLabel);
 		this.pack();
 		this.setVisible(true);
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.setAlwaysOnTop(true);
-		
-		int delay = 3500; //millis
-		
+
+		int delay = 3500; // millisecondi
+
 		ActionListener task = new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				chiudiFinestra();
-				
 			}
-
 		};
+
+		// Riproduce il suono di vittoria del round
 		AudioManager.getInstance().play("res/round.wav");
-		
+
 		CampoDiGioco.instance().setRoundTerminato(false);
 		this.timer = new Timer(delay, task);
 		this.timer.start();
-
 	}
-	
+
 	/**
 	 * Metodo che viene chiamato dal timer per chiudere la finestra ed avanzare nel gioco
 	 */
@@ -74,17 +69,14 @@ public class PannelloVittoriaRound extends JDialog{
 		this.setVisible(false);
 		this.timer.stop();
 		CampoDiGioco.instance().ricomincia();
-		Carta c=null;
+		Carta c = null;
+
 		try {
-			
 			c = CampoDiGioco.instance().getMazzoCarte().pesca();
-			if (!(c.getValore() instanceof ValoreCartaSpeciale))
-			{
+			if (!(c.getValore() instanceof ValoreCartaSpeciale)) {
 				CampoDiGioco.instance().getPilaScarti().aggiungiCarta(c);
 				CampoDiGioco.instance().setColoreCampo(c.getColore());
-			}
-			else
-			{
+			} else {
 				c = CampoDiGioco.instance().getMazzoCarte().pesca();
 				CampoDiGioco.instance().getPilaScarti().aggiungiCarta(c);
 				CampoDiGioco.instance().setColoreCampo(c.getColore());
@@ -92,8 +84,8 @@ public class PannelloVittoriaRound extends JDialog{
 		} catch (MazzoEsauritoException e) {
 			e.printStackTrace();
 		}
-		
-		CampoDiGioco.instance().aggiorna();			
+
+		CampoDiGioco.instance().aggiorna();
 		CampoDiGioco.instance().getTurnoPartita().turnoAttuale();
 	}
 }

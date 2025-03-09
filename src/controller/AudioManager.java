@@ -1,20 +1,13 @@
 package controller;
 
+import javax.sound.sampled.*;
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 /**
  * Classe che serve per riprodurre un audio
  * @author michele marchetti
- *
  */
 public class AudioManager {
 
@@ -24,8 +17,8 @@ public class AudioManager {
 	private static AudioManager instance;
 
 	/**
-	 * Metodo che restiuisce l'istanza della classe
-	 * @return
+	 * Metodo che restituisce l'istanza della classe
+	 * @return l'istanza di AudioManager
 	 */
 	public static AudioManager getInstance() {
 		if (instance == null)
@@ -37,55 +30,50 @@ public class AudioManager {
 	 * Metodo costruttore privato
 	 */
 	private AudioManager() {
-
 	}
 
 	/**
-	 * Metodo che riproduce in loop il file audio relativo al percorso passato come argomento 
-	 * @param filename
+	 * Metodo che riproduce in loop il file audio relativo al percorso passato come argomento
+	 * @param filename il percorso del file audio
 	 */
 	public void playInLoop(String filename) {
-
 		try {
-			InputStream in = new BufferedInputStream(new FileInputStream(filename));
-			AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);
+			InputStream in = getClass().getClassLoader().getResourceAsStream(filename);
+			if (in == null) {
+				System.err.println("File audio non trovato: " + filename);
+				return;
+			}
+
+			BufferedInputStream bufferedIn = new BufferedInputStream(in);
+			AudioInputStream audioIn = AudioSystem.getAudioInputStream(bufferedIn);
 			Clip clip = AudioSystem.getClip();
 			clip.open(audioIn);
 			clip.start();
 			clip.loop(Clip.LOOP_CONTINUOUSLY);
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		} catch (UnsupportedAudioFileException e1) {
-			e1.printStackTrace();
-		} catch (LineUnavailableException e1) {
-			e1.printStackTrace();
+		} catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+			e.printStackTrace();
 		}
-		
 	}
-	
+
 	/**
-	 * Metodo che riproduce in loop il file audio relativo al percorso passato come argomento 
-	 * @param filename
+	 * Metodo che riproduce un file audio una sola volta
+	 * @param filename il percorso del file audio
 	 */
 	public void play(String filename) {
-
 		try {
-			InputStream in = new BufferedInputStream(new FileInputStream(filename));
-			AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);
+			InputStream in = getClass().getClassLoader().getResourceAsStream(filename);
+			if (in == null) {
+				System.err.println("File audio non trovato: " + filename);
+				return;
+			}
+
+			BufferedInputStream bufferedIn = new BufferedInputStream(in);
+			AudioInputStream audioIn = AudioSystem.getAudioInputStream(bufferedIn);
 			Clip clip = AudioSystem.getClip();
 			clip.open(audioIn);
 			clip.start();
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		} catch (UnsupportedAudioFileException e1) {
-			e1.printStackTrace();
-		} catch (LineUnavailableException e1) {
-			e1.printStackTrace();
+		} catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+			e.printStackTrace();
 		}
-		
 	}
 }
